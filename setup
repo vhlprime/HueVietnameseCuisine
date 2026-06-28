@@ -1,0 +1,39 @@
+Content is user-generated and unverified.CustomizeHuế Vietnamese Cuisine — website
+Mobile-first online ordering for Huế Vietnamese Cuisine (Seattle, pickup-only).
+This is a static site: plain HTML + CSS + JavaScript. No build step, no framework.
+That is intentional — it loads fast, has nothing to break under load, and deploys to
+Cloudflare Pages in seconds. Great for holiday / wedding peak traffic.
+Files
+FileWhat it isindex.htmlThe page markup. The app entry point. Loads the CSS + JS.styles.cssAll styling (theme, layout, mobile rules).script.jsAll app logic (menu, cart, checkout, payments, forms, analytics).sitemap.xmlFor Google Search Console.robots.txtSearch-engine rules + sitemap link._headersCloudflare Pages caching + security headers..well-known/Where Stripe's Apple Pay domain file goes (see SETUP.md).SETUP.mdStep-by-step beginner guide for keys, PayPal, Stripe, Apple Pay.
+
+About "index.js" / "Next.js": a static site's entry is index.html, not index.js,
+and it does not need Next.js. Next.js is a React framework that adds a build step
+and a server — useful for big app-style sites, but unnecessary here and more to break.
+If you ever truly need Next.js (e.g., server-rendered pages), say so and I can scaffold it.
+For your goal — a fast, reliable ordering site on a live domain — this static project is the right tool.
+
+Run it locally (VS Code)
+
+Open this site/ folder in VS Code.
+Install the Live Server extension (by Ritwick Dey).
+Right-click index.html → Open with Live Server. It opens at http://127.0.0.1:5500.
+(Payments stay in safe "fallback" mode locally until you finish SETUP.md.)
+
+Deploy to a live domain (Cloudflare Pages + GitHub auto-deploy)
+
+Push this folder to a GitHub repo (git init, commit, push).
+Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git.
+Pick the repo. Build settings:
+
+Framework preset: None
+Build command: (leave empty)
+Build output directory: / (or the folder this lives in)
+
+
+Deploy. Then Custom domains → add huevietnamesecuisine.com (it's already in your Cloudflare).
+From now on, every git push to main redeploys automatically — no re-uploading.
+
+Payments / backend
+Payment secret keys never live in this folder. They go in a separate Cloudflare
+Worker (in the backend/ folder of this project) via wrangler secret put.
+Follow SETUP.md to turn payments on safely and make a real charge succeed.
