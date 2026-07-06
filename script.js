@@ -18,12 +18,6 @@ const CFG = {
   PHONE: '(206) 693-3311',
   ADDRESS: '6538 4th Ave S, Suite 1, Seattle, WA 98108',
   PAY: { apple: 'minhh2004@icloud.com', paypal: 'huevietnamesecuisine@gmail.com' },
-  PAYPAL_LINK: '',
-  PAYPAL_HOSTED_ID: '',
-  PAYPAL_FORCE_FALLBACK: true, // TEMP: PayPal's own Hosted Button is erroring ("Contact the merchant
-  // for help") — almost always a client-id / hosted-button-id account mismatch (see DEPLOY.md).
-  // While true, customers see the plain, always-working PayPal.me link instead of the broken button.
-  // Set back to false once you've confirmed the correct Live client-id in index.html's PayPal <script> tag.
   STRIPE_PK: 'pk_test_51Tjmcw2M78EoYLEyghbHCJKOc939oU83Q3KKOXferWpnl5chPpOxr8PVvVqW6znX5yE8skZmOpsib5GVWybj9PWT00hkAwBHeJ', // publishable key — safe in front-end
   API_BASE: '', // backend base URL; leave '' if the site and API share the same domain
   PAYMENTS_BACKEND: true, // live: /api/orders, /api/orders/:id/capture, /api/stripe/* are deployed
@@ -31,7 +25,7 @@ const CFG = {
   NOTIFY_EMAIL: 'huevietnamesecuisine@gmail.com',
   NOTIFY_SMS: '(206) 554-9522',
   SOCIAL: {                    // paste your real links here
-    facebook:'#', instagram:'https://www.instagram.com/huevietnamesecuisine?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr', google:'#', yelp:'#',
+    facebook:'#', instagram:'#', google:'#', yelp:'#',
     website:'https://huevietnamesecuisine.com'
   }
 };
@@ -415,8 +409,8 @@ const PHOTOS = {
   D7:'images/strawberry-smoothie.jpg',
   D9:'images/avocado-smoothie.jpg'
 };
-// REAL photos (no AI caption): N1. Everything else is AI-generated.
-const AI_PHOTO = new Set(['S1','A1','A3','M1','W2','S2','S3','S4','S5','S6','S7','S8','A2','A6','A7','W1','M2','G1','B5','B6','B7','B8','B9','T1','D7','D9']);
+// REAL photos (no AI caption): N1, A1, A3, M1, W2. Everything else is AI-generated.
+const AI_PHOTO = new Set(['S1','S2','S3','S4','S5','S6','S7','S8','A2','A6','A7','W1','M2','G1','B5','B6','B7','B8','B9','T1','D7','D9']);
 function renderMenu(){
   // category chips
   document.getElementById('catRow').innerHTML =
@@ -948,7 +942,7 @@ function renderScanSheet(title, payUrl, note){
 }
 async function stripeCheckoutQR(){
   const base=CFG.API_BASE||'';
-  const r=await fetch(base+'/api/stripe/checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({total:payCtx.amount})});
+  const r=await fetch(base+'/api/stripe/checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(orderPayload())});
   if(!r.ok) throw new Error('session'); const d=await r.json(); if(!d.url||!d.id) throw new Error('session');
   renderScanSheet('Apple Pay · Scan to pay', d.url, 'Powered by Stripe. You are charged only after you approve on your phone.');
   openSheet('paySheet'); stopPoll();
@@ -959,7 +953,7 @@ async function stripeCheckoutQR(){
 }
 async function paypalCheckoutQR(){
   const base=CFG.API_BASE||'';
-  const r=await fetch(base+'/api/paypal/checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:Number(payCtx.amount).toFixed(2)})});
+  const r=await fetch(base+'/api/paypal/checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(orderPayload())});
   if(!r.ok) throw new Error('session'); const d=await r.json(); if(!d.approveUrl||!d.id) throw new Error('session');
   renderScanSheet('PayPal · Scan to pay', d.approveUrl, 'Powered by PayPal. You are charged only after you approve on your phone.');
   openSheet('paySheet'); stopPoll();
@@ -987,15 +981,22 @@ function renderPayPal(){
       <div id="ppContainer" style="min-height:46px"></div>
       <button class="btn-ghost" id="ppScan" style="margin-top:10px${CFG.PAYMENTS_BACKEND?'':';display:none'}">Scan to pay from your phone</button>
       <div id="ppFallback" style="display:none;margin-top:6px">
-        <form action="${CFG.PAYPAL_LINK}" method="post" target="_blank" style="display:grid;justify-items:center;gap:8px">
-          <button class="place" type="submit" style="background:#FFD140;color:#000">Pay with PayPal</button>
-        </form>
+        <p style="font-size:13px;color:#B23B3B;text-align:center">PayPal is temporarily unavailable. Please use Apple Pay above, or call (206) 693-3311 to order by phone — sorry for the trouble!</p>
       </div>
       <p style="text-align:center;font-size:10.5px;color:var(--ink-soft);margin-top:10px">You're charged only when you approve in PayPal. A receipt is emailed once payment is confirmed.</p>
     </div>`;
   document.querySelectorAll('#paySheet [data-close]').forEach(b=>b.addEventListener('click',closeSheets));
   mountPayPal();
   const ps=document.getElementById('ppScan'); if(ps) ps.addEventListener('click', ()=>paypalCheckoutQR().catch(()=>toast('Could not start PayPal scan')));
+}
+function orderPayload(){
+  const t = calcTotals();
+  return {
+    items: cart.map(l => ({ code:l.code, size:l.size||null, qty:l.qty })),
+    tip: t.tipAmt,
+    coupon: couponApplied ? COUPON.code : null,
+    free: freePromo ? freeCode : null
+  };
 }
 function payPalOrderSnapshot(code){
   const t=calcTotals();
@@ -1005,14 +1006,13 @@ function payPalOrderSnapshot(code){
 }
 function mountPayPal(){
   try{
-    if(CFG.PAYPAL_FORCE_FALLBACK) throw new Error('fallback_forced');
     if(window.paypal && CFG.PAYMENTS_BACKEND && window.paypal.Buttons){
       const base = CFG.API_BASE || '';
       // Real, success-gated checkout: order created + captured server-side (live PayPal); receipt only on COMPLETED.
       window.paypal.Buttons({
         style:{ shape:'rect', layout:'vertical', color:'gold', label:'paypal' },
         createOrder: async ()=>{
-          const r = await fetch(base+'/api/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ amount: Number(payCtx.amount).toFixed(2) }) });
+          const r = await fetch(base+'/api/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(orderPayload()) });
           const d = await r.json();
           if(d && d.id) return d.id;
           throw new Error('create_failed');
@@ -1027,11 +1027,6 @@ function mountPayPal(){
         },
         onError: ()=>{ toast('PayPal error — you were not charged'); }
       }).render('#ppContainer');
-      return;
-    }
-    if(window.paypal && window.paypal.HostedButtons){
-      // No backend yet: official PayPal hosted button (real payment; PayPal shows the confirmation).
-      window.paypal.HostedButtons({ hostedButtonId: CFG.PAYPAL_HOSTED_ID }).render('#ppContainer');
       return;
     }
     throw new Error('sdk_unavailable');
