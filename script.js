@@ -415,8 +415,8 @@ const PHOTOS = {
   D7:'images/strawberry-smoothie.jpg',
   D9:'images/avocado-smoothie.jpg'
 };
-// REAL photos (no AI caption): N1, A1, A3, M1, W2. Everything else is AI-generated.
-const AI_PHOTO = new Set(['S1','S2','S3','S4','S5','S6','S7','S8','A2','A6','A7','W1','M2','G1','B5','B6','B7','B8','B9','T1','D7','D9']);
+// REAL photos (no AI caption): N1. Everything else is AI-generated.
+const AI_PHOTO = new Set(['S1','A1','A3','M1','W2','S2','S3','S4','S5','S6','S7','S8','A2','A6','A7','W1','M2','G1','B5','B6','B7','B8','B9','T1','D7','D9']);
 function renderMenu(){
   // category chips
   document.getElementById('catRow').innerHTML =
