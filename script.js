@@ -18,7 +18,7 @@ const CFG = {
   PHONE: '(206) 693-3311',
   ADDRESS: '6538 4th Ave S, Suite 1, Seattle, WA 98108',
   PAY: { apple: 'minhh2004@icloud.com', paypal: 'huevietnamesecuisine@gmail.com' },
-  STRIPE_PK: 'pk_test_51Tjmcw2M78EoYLEyghbHCJKOc939oU83Q3KKOXferWpnl5chPpOxr8PVvVqW6znX5yE8skZmOpsib5GVWybj9PWT00hkAwBHeJ', // publishable key — safe in front-end
+  STRIPE_PK: 'pk_live_51TjmcjRx781KXtvj6LayrNQCj1MkJzpwNRSUbBINWXLc6c36L3JqFpd6XQiDanvGKOVJKxeGhugoddnOuyktVnb100RfSnOw2g', // publishable key — safe in front-end
   API_BASE: '', // backend base URL; leave '' if the site and API share the same domain
   PAYMENTS_BACKEND: true, // live: /api/orders, /api/orders/:id/capture, /api/stripe/* are deployed
   TURNSTILE_SITEKEY: '0x4AAAAAADwYT4YkdY35T7_S', // Cloudflare Turnstile TEST key — replace with your real site key
