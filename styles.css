@@ -1,5 +1,5 @@
 /* ============================================================
-   DESIGN TOKENS  ·  Huế Vietnamese Cuisine
+   DESIGN TOKENS  Hue Vietnamese Cuisine
    ============================================================ */
 :root{
   --crimson:#A85A6B;        /* soft dusty-rose blush â€” calm primary accent */
@@ -78,7 +78,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.05;letter-spac
    ============================================================ */
 .hero{background:radial-gradient(120% 90% at 50% -10%,#fff 0%,var(--ivory) 60%);
   text-align:center;padding:24px 18px 8px}
-.hero__logo{width:min(330px,82%);margin:0 auto;filter:drop-shadow(0 14px 26px rgba(122,20,32,.18))}
+.hero__logo{width:min(430px,92%);margin:0 auto;filter:drop-shadow(0 14px 26px rgba(122,20,32,.18))}
 .hero__tag{font-family:var(--display);font-style:italic;font-size:21px;color:var(--ink-soft);
   margin-top:6px}
 .hero__meta{font-size:12.5px;letter-spacing:.04em;color:var(--ink-soft);margin-top:14px;line-height:1.9}
@@ -454,3 +454,61 @@ body{overscroll-behavior-y:contain}                   /* tame pull-to-refresh bo
 button{user-select:none;-webkit-user-select:none}
 img{max-width:100%;height:auto}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+/* --- phone-width polish (iOS + Android) --- */
+@media(max-width:639px){
+  /* 16 featured cards become a swipeable, snap-to-card carousel instead of a very long grid */
+  .photos{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:76%;
+    overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    padding-bottom:8px;scrollbar-width:none}
+  .photos::-webkit-scrollbar{display:none}
+  .pcard{scroll-snap-align:center}
+  /* iOS Safari auto-zooms any focused text input under 16px â€” keep these at 16px to stop the jump */
+  input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:16px}
+  /* Apple/Google recommend ~44px minimum touch targets */
+  .add{min-height:44px;padding:10px 18px}
+  .qtynum,.sel{min-height:44px}
+}
+@media(min-width:960px){.photos{grid-template-columns:repeat(3,1fr)}}
+.pcard{margin:0;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;padding-bottom:10px;transition:transform .12s ease}
+.pcard:active{transform:scale(.98)}
+.pcard img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;background:#f6eef0}
+.pcard__cap{display:block;font-size:14px;font-weight:700;color:var(--ink);padding:9px 11px 0;line-height:1.3}
+.pcard__vn{display:block;font-size:12px;font-weight:500;color:var(--crimson);margin-top:2px}
+.ai-cap{display:block;font-size:11px;color:#9a8785;margin-top:5px;padding:0 11px;line-height:1.35}
+.item__thumb--photo{padding:0;overflow:hidden;background:#f6eef0}
+.item__img{width:100%;height:100%;object-fit:cover;display:block}
+.ai-cap--row{margin-top:2px;padding:0}
+/* ---- Today's Table + signature effects (mobile-speed safe) ---- */
+.today-vn{font-size:13px;color:var(--gold);font-style:italic;margin:2px 0 6px}
+.pcard--hero{grid-column:1/-1}
+.pcard--hero img{aspect-ratio:16/10}
+@media(max-width:639px){.photos .pcard--hero{grid-auto-columns:auto;width:88%}}
+.item--flash{outline:2px solid var(--gold);outline-offset:2px;transition:outline-color 1.2s ease}
+
+/* signature 1: subtle prismatic-blue sheen on the primary Order button (static gradient â€” zero runtime cost) */
+.quick__btn.primary{background:linear-gradient(120deg,var(--burgundy) 0%,var(--burgundy) 55%,#3f5e8c 85%,#6aa5c9 100%);background-size:140% 140%}
+.quick__btn.primary .arrow{color:#dcecf7}
+
+/* signature 2: gentle 3D tilt on Today's Table cards â€” desktop pointers only, respects reduced motion */
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .pcard{transition:transform .18s ease, box-shadow .18s ease}
+  .pcard:hover{transform:perspective(700px) rotateX(1.6deg) rotateY(-1.6deg) translateY(-3px);box-shadow:0 14px 28px rgba(122,20,32,.14)}
+}
+
+/* coupon field at checkout */
+.couponrow{display:flex;gap:8px;margin-bottom:10px}
+.couponrow .add{margin-left:0}
+
+/* choice checkboxes (Beef Phá»Ÿ meats), compact extra sides */
+.opts{border:1px solid var(--line,#e5d9cf);border-radius:10px;padding:6px 8px;margin:2px 0;display:flex;flex-wrap:wrap;gap:6px;width:100%}
+.opts legend{font-size:11px;color:var(--ink-soft);padding:0 4px}
+.optchip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;background:#faf5ee;border:1px solid #e5d9cf;border-radius:999px;padding:6px 10px;cursor:pointer}
+.optchip input{accent-color:var(--burgundy,#7A1420);margin:0}
+.optchip input:checked + span{font-weight:700;color:var(--burgundy,#7A1420)}
+.opts--err{border-color:#B23B3B;box-shadow:0 0 0 2px rgba(178,59,59,.15)}
+.sides-fold{background:#faf6f0;border:1px dashed #e0d2c4;border-radius:12px;padding:4px 10px;margin:4px 0 10px}
+.sides-fold summary{cursor:pointer;font-size:13.5px;color:var(--ink-soft);padding:8px 2px;list-style:none}
+.sides-fold summary::-webkit-details-marker{display:none}
+.sides-fold .item{transform:scale(.98);transform-origin:left top}
+.pcard__price{display:block;font-size:12.5px;font-weight:700;color:var(--gold,#B8860B);margin-top:2px}

@@ -4,17 +4,17 @@
    ============================================================ */
 const CFG = {
   TAX_RATE: 0.1055,            // Seattle, WA combined sales tax (effective Jan 1 2026). Verify exact rate for 98108.
-  PROCESSING_FEE_RATE: 0.02,   // 2% card processing fee passed to the customer
+  PROCESSING_FEE_RATE: 0.029,  // 2.9% card processing fee passed to the customer
   POINTS_PER_DOLLAR: 1,        // loyalty earn rate (on pre-tax subtotal)
   SIGNUP_BONUS: 0,             // no welcome-points bonus
   REDEEM_POINTS: 100,          // 100 points = ONE free Bánh Mì of choice
-  BANH_FREE_QTY: 5,            // buy this many Bánh Mì -> 1 free
+  BANH_FREE_QTY: 10,           // buy this many Bánh Mì -> 1 free
   HAPPY_HOUR: { start: 14, end: 17, off: 2 },  // 2-5 PM daily, $2 off when chicken wings are in the cart
   HOURS: { open: 10, close: 20, days: [1,2,3,4,5,6] }, // Mon-Sat 10AM-8PM
   WEBSITE: 'huevietnamesecuisine.com',
   GA4_ID: '',            // e.g. 'G-XXXXXXXXXX' — loads Google Analytics only AFTER cookie consent
   CF_BEACON: '',         // Cloudflare Web Analytics token (cookieless; loads immediately)
-  FORMS_BACKEND: false,  // set true once /api/contact + /api/lead are deployed (Supabase + Resend)
+  FORMS_BACKEND: true,   // set true once /api/contact + /api/lead are deployed (Supabase + Resend)
   PHONE: '(206) 693-3311',
   ADDRESS: '6538 4th Ave S, Suite 1, Seattle, WA 98108',
   PAY: { apple: 'minhh2004@icloud.com', paypal: 'huevietnamesecuisine@gmail.com' },
@@ -62,110 +62,132 @@ const MENU = [
   { id:'app', name:'Appetizers', vn:'Món Khai Vị', sauce:true,
     note:'Choose one sauce: house, peanut, or soy.', glyph:'🥢', theme:'roll',
     items:[
-      {code:'A1', name:'Egg Rolls (Pork & Shrimp)', vn:'Chả Giò Tôm & Thịt Heo', price:8.85},
-      {code:'A2', name:'Shrimp Egg Rolls', vn:'Chả Giò Tôm', price:8.85},
-      {code:'A3', name:'Vegetable Egg Rolls', vn:'Chả Giò Rau Quả', price:8.85},
-      {code:'A4', name:'Vegetable Summer Rolls', vn:'Gỏi Cuốn Rau Quả', price:7.00, desc:'No meat'},
-      {code:'A5', name:'Tofu Summer Rolls', vn:'Gỏi Cuốn Đậu Hũ', price:7.00},
-      {code:'A6', name:'Shrimp & Pork Summer Rolls', vn:'Gỏi Cuốn Tôm & Thịt Heo', price:8.85},
-      {code:'A7', name:'Shrimp Summer Rolls', vn:'Gỏi Cuốn Tôm', price:8.85},
-      {code:'A8', name:'Grilled Pork Sausage Summer Rolls', vn:'Gỏi Cuốn Nem Nướng', price:8.85},
-      {code:'A9', name:'Grilled Pork Sausage', vn:'Nem Nướng', price:8.85},
-      {code:'A10', name:'French Fries', vn:'', price:4.85},
-      {code:'A11', name:'Gyoza', vn:'', price:6.85},
-      {code:'A12', name:'Shrimp Dumplings', vn:'Há Cảo Tôm', price:8.85},
-      {code:'A13', name:'Calamari Tofu', vn:'', price:13.85},
-      {code:'A14', name:'Salt & Pepper Calamari', vn:'Mực Chiên Muối', price:16.85},
+      {code:'A1', name:'Egg Rolls (2)', vn:'Chả Giò', price:6.95, sizes:[{l:'Pork & Shrimp',p:6.95},{l:'Vegetable',p:6.95}]},
+      {code:'A2', name:'Summer Rolls (2)', vn:'Gỏi Cuốn Chay', veg:true, price:7.95, sizes:[{l:'Vegetable',p:7.95},{l:'Tofu',p:7.95}]},
+      {code:'A3', name:'Summer Rolls (2)', vn:'Gỏi Cuốn', price:8.95, sizes:[{l:'Shrimp & Pork',p:8.95},{l:'Shrimp',p:8.95},{l:'Grilled Pork Sausage',p:8.95}]},
+      {code:'A4', name:'Grilled Pork Sausage Skewers (2)', vn:'Nem Nướng Xiên', price:9.95},
+      {code:'A5', name:'Fried Shrimp Cake Skewers (2)', vn:'Bánh Tôm Xiên', price:11.95},
+      {code:'A6', name:'Salt & Pepper Tofu', vn:'Đậu Hũ Muối Tiêu', veg:true, price:9.95},
+      {code:'A7', name:'Salt & Pepper Calamari', vn:'Mực Chiên Muối', star:true, price:11.95},
+      {code:'A8', name:'French Fries', vn:'Khoai Tây Chiên', veg:true, price:4.95},
+      {code:'A9', name:'Shrimp Dumplings (6)', vn:'Há Cảo Tôm', price:7.95},
+      {code:'A10', name:'Gyoza (6)', vn:'', price:7.95},
     ]},
   { id:'pho', name:'Phở', vn:'Phở', glyph:'🍜', theme:'pho',
     note:'Served with Thai basil, bean sprouts, jalapeños, green onion & lime.',
     items:[
-      {code:'S1', name:'Oxtail & Beef Meatball Phở', vn:'Phở Đuôi Bò & Bò Viên', price:19.95},
-      {code:'S2', name:'Combo Phở', vn:'Phở Đặc Biệt', sizes:[{l:'Large',p:17.85},{l:'Medium',p:16.85}]},
-      {code:'S3', name:'Rare Steak Phở', vn:'Phở Tái', sizes:[{l:'Large',p:16.85},{l:'Medium',p:15.85}]},
-      {code:'S4', name:'Meatball & Rare Steak Phở', vn:'Phở Tái Bò Viên', sizes:[{l:'Large',p:16.85},{l:'Medium',p:15.85}]},
-      {code:'S5', name:'Beef Meatball Phở', vn:'Phở Bò Viên', sizes:[{l:'Large',p:16.85},{l:'Medium',p:15.85}]},
-      {code:'S6', name:'Chicken Phở', vn:'Phở Gà', sizes:[{l:'Large',p:15.85},{l:'Medium',p:14.85}]},
-      {code:'S7', name:'Vegetable Tofu Phở', vn:'Phở Đậu Hũ', sizes:[{l:'Large',p:15.85},{l:'Medium',p:14.85}]},
-      {code:'S8', name:'Seafood Phở', vn:'Phở Hải Sản', price:17.85},
-      {code:'S9', name:'Beef Rib Phở', vn:'Phở Sườn Bò', price:17.85},
+      {code:'S1', name:'Beef Short Ribs & Meatball Phở', vn:'Phở Sườn Bò & Bò Viên', star:true, price:18.95},
+      {code:'S2', name:'Oxtail & Meatball Phở', vn:'Phở Đuôi Bò & Bò Viên', price:18.95},
+      {code:'S3', name:'Hanoi-Style Phở', vn:'Phở Hà Nội', price:17.95},
+      {code:'S4', name:'Seafood Phở', vn:'Phở Hải Sản', price:17.95},
+      {code:'S5', name:'Combo Phở', vn:'Phở Đặc Biệt', star:true, desc:'Includes rare steak, meatball, brisket, fatty brisket and tendon.', sizes:[{l:'Medium',p:17.95},{l:'Large',p:18.95}]},
+      {code:'S6', name:'Beef Phở', vn:'Phở Bò', desc:'Choose 1 to 3 types of meats.', sizes:[{l:'Medium',p:15.95},{l:'Large',p:16.95}], opts:{label:'Meats (pick 1–3)', choices:['Rare Steak','Meatball','Brisket','Fatty Brisket','Tendon'], max:3}},
+      {code:'S7', name:'Chicken Phở', vn:'Phở Gà', sizes:[{l:'Medium',p:14.95},{l:'Large',p:15.95}]},
+      {code:'S8', name:'Tofu, Vegan Ham & Vegetable Phở', vn:'Phở Chay', veg:true, sizes:[{l:'Medium',p:14.95},{l:'Large',p:15.95}]},
     ]},
   { id:'bbh', name:'Bún Bò Huế', vn:'Bún Bò Huế', glyph:'🌶️', theme:'spicy',
     items:[
-      {code:'N1', name:'Spicy Beef Noodle Soup', vn:'Bún Bò Huế', price:19.85, desc:'Thick rice noodles, chili oil, fresh herbs — our signature dish.'},
+      {code:'N1', name:'Spicy Beef Noodle Soup', vn:'Bún Bò Huế', spicy:true, star:true, price:18.95, desc:'Thick rice noodles, chili oil, fresh herbs — our signature dish.'},
     ]},
   { id:'wing', name:'Chicken Wings', vn:'Cánh Gà', glyph:'🍗', theme:'wing',
     items:[
-      {code:'C1', name:'Fish Sauce Wings', vn:'Cánh Gà Nước Mắm', price:12.85},
-      {code:'C2', name:'Butter Fried Wings', vn:'Cánh Gà Chiên Bơ', price:12.85},
+      {code:'C1', name:'Fish Sauce Wings (6)', vn:'Cánh Gà Nước Mắm', price:12.95},
+      {code:'C2', name:'Butter Fried Wings (6)', vn:'Cánh Gà Chiên Bơ', price:12.95},
     ]},
   { id:'rice', name:'Fried Rice', vn:'Cơm Chiên', glyph:'🍚', theme:'rice',
     items:[
-      {code:'W1', name:'House Wok Fried Rice', vn:'Cơm Chiên Thập Cẩm', price:15.85},
-      {code:'W2', name:'Shrimp & Pork Fried Rice', vn:'', price:14.85},
-      {code:'W3', name:'Shrimp Fried Rice', vn:'Cơm Chiên Tôm', price:14.85},
-      {code:'W4', name:'Pork Fried Rice', vn:'Cơm Chiên Thịt Heo', price:14.85},
-      {code:'W5', name:'Chicken Fried Rice', vn:'Cơm Chiên Gà', price:13.85},
+      {code:'W1', name:'House Wok Fried Rice', vn:'Cơm Chiên Thập Cẩm', price:17.95, desc:'Fried with pork, chicken, shrimp and Chinese sausage.'},
+      {code:'W2', name:'Fried Rice', vn:'Cơm Chiên', price:16.95, sizes:[{l:'Shrimp',p:16.95},{l:'Pork',p:16.95},{l:'Shrimp & Pork',p:16.95}]},
+      {code:'W5', name:'Chicken Fried Rice', vn:'Cơm Chiên Gà', price:15.95},
     ]},
   { id:'rplate', name:'Rice Plates', vn:'Cơm Dĩa', glyph:'🍛', theme:'rice', note:'Served with steamed rice.',
     items:[
-      {code:'R1', name:'Grilled Chicken & Rice', vn:'Cơm Gà Nướng', price:14.85},
-      {code:'R2', name:'Pork Ribs & Rice', vn:'Cơm Sườn Heo', price:15.85},
-      {code:'R3', name:'Beef Ribs & Rice', vn:'Cơm Sườn Bò', price:16.85},
+      {code:'R1', name:'Grilled Chicken Rice Plate', vn:'Cơm Gà Nướng', price:15.95, desc:'Served with egg roll & fried egg.'},
+      {code:'R2', name:'Grilled Pork Chop Rice Plate', vn:'Cơm Sườn Heo', price:16.95, desc:'Served with egg roll & fried egg.'},
+      {code:'R3', name:'Grilled Beef Short Rib Rice Plate', vn:'Cơm Sườn Bò', price:18.95, desc:'Served with egg rolls & fried egg.'},
     ]},
-  { id:'stir', name:'Stir-Fry Entrées', vn:'Món Xào', glyph:'🥘', theme:'stir', note:'Served with rice.',
+  { id:'stir', name:'Stir-Fry Entrées', vn:'Món Xào', glyph:'🥘', theme:'stir',
+    note:'Every stir-fry comes with your choice of white or brown rice.',
     items:[
-      {code:'M1', name:'Mongolian Beef', vn:'', price:17.85},
-      {code:'M2', name:'Shaken Beef', vn:'Bò Lúc Lắc', price:17.85},
-      {code:'M3', name:'Lemongrass Chicken', vn:'Gà Xào Sả Ớt', price:15.85},
-      {code:'M4', name:'Vegetable Stir-Fry', vn:'Rau Củ Xào', price:13.85},
-      {code:'M5', name:'Green Beans', vn:'Đậu Que', price:12.85},
-      {code:'M6', name:'Beef & Green Bean', vn:'Thịt Bò Xào Đậu Que', price:17.85},
-      {code:'M7', name:'Shrimp & Garlic Green Bean', vn:'Đậu Que & Tôm Xào Tỏi', price:16.85},
-      {code:'M8', name:'Chicken & Green Bean', vn:'Thịt Gà Xào Đậu Que', price:13.85},
+      {code:'M1', name:'Mongolian Beef', vn:'', star:true, price:18.95, sizes:[{l:'White Rice',p:18.95},{l:'Brown Rice',p:18.95}]},
+      {code:'M2', name:'Shaken Beef', vn:'Bò Lúc Lắc', price:18.95, sizes:[{l:'White Rice',p:18.95},{l:'Brown Rice',p:18.95}]},
+      {code:'M3', name:'Lemongrass Chicken', vn:'Gà Xào Sả Ớt', spicy:true, price:16.95, sizes:[{l:'White Rice',p:16.95},{l:'Brown Rice',p:16.95}]},
+      {code:'M4', name:'Vegetable Stir-Fry', vn:'Rau Củ Xào', veg:true, price:14.95, sizes:[{l:'White Rice',p:14.95},{l:'Brown Rice',p:14.95}]},
+      {code:'M5', name:'Garlic Green Bean', vn:'Đậu Que Xào Tỏi', veg:true, price:14.95, sizes:[{l:'White Rice',p:14.95},{l:'Brown Rice',p:14.95}]},
+      {code:'M6', name:'Chicken & Green Bean', vn:'Thịt Gà Xào Đậu Que', price:15.95, sizes:[{l:'White Rice',p:15.95},{l:'Brown Rice',p:15.95}]},
+      {code:'M7', name:'Shrimp & Garlic Green Bean', vn:'Đậu Que & Tôm Xào Tỏi', price:16.95, sizes:[{l:'White Rice',p:16.95},{l:'Brown Rice',p:16.95}]},
+      {code:'M8', name:'Beef & Green Bean', vn:'Thịt Bò Xào Đậu Que', price:17.95, sizes:[{l:'White Rice',p:17.95},{l:'Brown Rice',p:17.95}]},
     ]},
   { id:'mein', name:'Chow Mein', vn:'Mì Xào Mềm', glyph:'🍝', theme:'noodle',
     items:[
-      {code:'X1', name:'House Chow Mein', vn:'Mì Xào Thập Cẩm', price:17.85},
-      {code:'X2', name:'Beef Chow Mein', vn:'Mì Xào Bò', price:17.85},
-      {code:'X3', name:'Pork Chow Mein', vn:'Mì Xào Thịt Heo', price:16.85},
-      {code:'X4', name:'Chicken Chow Mein', vn:'Mì Xào Gà', price:15.85},
-      {code:'X5', name:'Shrimp Chow Mein', vn:'Mì Xào Tôm', price:16.85},
+      {code:'X1', name:'House Chow Mein', vn:'Mì Xào Thập Cẩm', price:17.95},
+      {code:'X2', name:'Beef Chow Mein', vn:'Mì Xào Bò', price:17.95},
+      {code:'X3', name:'Shrimp Chow Mein', vn:'Mì Xào Tôm', price:16.95},
+      {code:'X4', name:'Pork Chow Mein', vn:'Mì Xào Thịt Heo', price:16.95},
+      {code:'X5', name:'Chicken Chow Mein', vn:'Mì Xào Gà', price:15.95},
     ]},
-  { id:'bun', name:'Vermicelli Bowls', vn:'Bún Thịt Nướng', glyph:'🥗', theme:'bowl',
+  { id:'bun', name:'Vermicelli Bowls', vn:'Bún', glyph:'🥗', theme:'bowl',
+    note:'All bowls are served with egg roll.',
     items:[
-      {code:'V1', name:'Grilled Shrimp & Egg Roll', vn:'Tôm Nướng & Chả Giò', price:17.85},
-      {code:'V2', name:'Grilled Chicken & Egg Roll', vn:'Gà Nướng & Chả Giò', price:16.85},
-      {code:'V3', name:'Grilled Pork & Egg Roll', vn:'Thịt Heo Nướng & Chả Giò', price:17.85},
-      {code:'V4', name:'Grilled Pork Sausage & Egg Roll', vn:'Nem Nướng & Chả Giò', price:17.85},
-      {code:'V5', name:'Beef Stir-Fry & Egg Roll', vn:'Bò Xào & Chả Giò', price:18.85},
-      {code:'V6', name:'Lemongrass Chicken & Egg Roll', vn:'Gà Xào Sả Ớt & Chả Giò', price:17.85},
+      {code:'V1', name:'Combo Vermicelli', vn:'Bún Đặc Biệt', star:true, price:19.95, desc:'Grilled shrimp, pork, pork sausage & egg roll.'},
+      {code:'V2', name:'Stir-Fry Beef Vermicelli', vn:'Bún Bò Xào', price:18.95},
+      {code:'V3', name:'Grilled Pork Vermicelli', vn:'Bún Thịt Nướng', price:16.95},
+      {code:'V4', name:'Grilled Chicken Vermicelli', vn:'Bún Gà Nướng', price:15.95},
+      {code:'V5', name:'Lemongrass Chicken Vermicelli', vn:'Bún Gà Xào Sả', price:15.95},
     ]},
-  { id:'plat', name:'Vermicelli Platters', vn:'Bánh Hỏi', glyph:'🍽️', theme:'platter',
+  { id:'plat', name:'Woven Vermicelli Platter', vn:'Bánh Hỏi', glyph:'🍽️', theme:'platter',
     items:[
-      {code:'P1', name:'Grilled Meats, Grilled Pork Patties, Grilled Shrimp, & Egg Rolls Platter', vn:'Bánh Hỏi Thịt Nướng, Nem Nướng, Tôm Nướng, & Chả Giò', price:18.00},
+      {code:'P1', name:'Combo Woven Vermicelli', vn:'Bánh Hỏi Đặc Biệt', price:20.95, desc:'Woven vermicelli with grilled shrimp, fried shrimp cake, pork, pork sausage, vegetables and rice paper.'},
     ]},
   { id:'banh', name:'Bánh Mì', vn:'Bánh Mì', glyph:'🥖', theme:'banh',
     items:[
-      {code:'B1', name:'Combo Sandwich', vn:'Bánh Mì Đặc Biệt', price:7.85},
-      {code:'B2', name:'House Grilled Pork', vn:'Bánh Mì Thịt Nướng', price:7.85},
-      {code:'B3', name:'Grilled Pork Patties', vn:'Bánh Mì Nem Nướng', price:8.85},
-      {code:'B4', name:'Roasted Pork', vn:'Bánh Mì Heo Quay', price:8.85},
-      {code:'B5', name:'Chicken', vn:'Bánh Mì Thịt Gà', price:7.85},
-      {code:'B6', name:'House Grilled Beef', vn:'Bánh Mì Bò Nướng', price:9.85},
-      {code:'B7', name:'Fried Tofu', vn:'Bánh Mì Kẹp Đậu Hũ Chiên', price:6.85},
-      {code:'B8', name:'Ham & Egg', vn:'Bánh Mì Ham & Trứng', price:7.85},
+      {code:'B1', name:'Fried Tofu Sandwich', vn:'Bánh Mì Kẹp Đậu Hũ Chiên', veg:true, price:7.95},
+      {code:'B2', name:'Chicken Sandwich', vn:'Bánh Mì Thịt Gà', price:7.95},
+      {code:'B3', name:'Sardine Sandwich', vn:'Bánh Mì Cá Mòi', price:7.95},
+      {code:'B4', name:'Ham & Egg Sandwich', vn:'Bánh Mì Ham & Trứng', price:7.95},
+      {code:'B5', name:'Combo Sandwich', vn:'Bánh Mì Đặc Biệt', star:true, price:8.95},
+      {code:'B6', name:'House Grilled Pork Sandwich', vn:'Bánh Mì Thịt Nướng', price:8.95},
+      {code:'B7', name:'Grilled Pork Sausage Sandwich', vn:'Bánh Mì Nem Nướng', price:8.95},
+      {code:'B8', name:'Roasted Pork Sandwich', vn:'Bánh Mì Heo Quay', price:8.95},
+      {code:'B9', name:'Stir-Fry Beef Sandwich', vn:'Bánh Mì Bò', price:9.95, desc:'Marinated beef stir-fried with onions with mayonnaise, pickled daikon and carrots, cucumber, jalapeños, and cilantro.'},
+    ]},
+  { id:'salad', name:'Salads', vn:'Gỏi', glyph:'🥬', theme:'stir',
+    items:[
+      {code:'G1', name:'Papaya Salad', vn:'Gỏi Đu Đủ', sizes:[{l:'Chicken',p:14.95},{l:'Shrimp',p:15.95}]},
+      {code:'G2', name:'Mango Salad', vn:'Gỏi Xoài', sizes:[{l:'Chicken',p:15.95},{l:'Shrimp',p:16.95}]},
+      {code:'G3', name:'Beef Salad', vn:'Gỏi Bò', price:19.95},
+    ]},
+  { id:'dessert', name:'Desserts', vn:'Tráng Miệng', glyph:'🍨', theme:'banh',
+    items:[
+      {code:'T1', name:'Mango Sticky Rice', vn:'Xôi Xoài', veg:true, price:6.95},
+      {code:'T2', name:'Grilled Banana Sticky Rice', vn:'Chuối Nếp Nướng', veg:true, price:5.95},
+    ]},
+  { id:'sides', name:'Extra Sides', vn:'Món Thêm', glyph:'🍥', theme:'rice', fold:true,
+    note:'Add-ons for your bowls and plates — add as many as you like.',
+    items:[
+      {code:'E1', name:'French Bread', vn:'Bánh Mì Không', price:2.00},
+      {code:'E2', name:'Rice or Noodle', vn:'Cơm hoặc Bánh Phở', price:3.00, sizes:[{l:'Rice',p:3.00},{l:'Noodle',p:3.00}]},
+      {code:'E3', name:'Broth', vn:'Nước Lèo', price:5.00},
+      {code:'E4', name:'Mixed Vegetables', vn:'Rau Thêm', price:4.00},
+      {code:'E5', name:'Bowl of Rare Steak, Flank, Brisket & Tendon', vn:'Chén Tái, Nạm, Gầu & Gân', price:6.00},
+      {code:'E6', name:'Bowl of Meatballs', vn:'Chén Bò Viên', price:6.00},
+      {code:'E7', name:'Extra Protein', vn:'Thêm Thịt', price:4.00, sizes:[{l:'Meatball',p:4.00},{l:'Rare Steak',p:4.00},{l:'Flank',p:4.00},{l:'Brisket',p:4.00},{l:'Tendon',p:4.00},{l:'Tofu',p:4.00},{l:'Shrimp',p:4.00}]},
+      {code:'E8', name:'Short Rib', vn:'Sườn Thêm', price:6.00},
+      {code:'E9', name:'Rice Paper', vn:'Bánh Tráng', price:3.00},
+      {code:'E10', name:'Egg', vn:'Trứng', price:2.50},
     ]},
   { id:'drink', name:'Refreshments & Drinks', vn:'Nước Giải Khát', glyph:'🧋', theme:'drink',
     items:[
-      {code:'D1', name:'Phin Drip Coffee', vn:'Cà Phê Pha Phin', price:5.50},
-      {code:'D2', name:'Marbled Coffee', vn:'Bạc Xỉu', price:6.00},
-      {code:'D3', name:'Viet Latte', vn:'Cà Phê Sữa Đá', price:6.50},
-      {code:'D4', name:'Salty Coffee', vn:'Cà Phê Muối', price:7.00},
-      {code:'D5', name:'Matcha Latte', vn:'', price:8.00},
-      {code:'D6', name:'Thai Tea', vn:'Trà Thái', price:5.00},
-      {code:'D7', name:'Canned Soda', vn:'', price:2.00},
-      {code:'D8', name:'Bottled Water', vn:'Nước Suối', price:1.00},
+      {code:'D1', name:'Iced Black Coffee', vn:'Cà Phê Đen Đá', price:5.50},
+      {code:'D2', name:'Viet Latte', vn:'Cà Phê Sữa Đá', price:6.00},
+      {code:'D3', name:'Matcha Latte', vn:'', price:7.50},
+      {code:'D4', name:'Kumquat Lemonade', vn:'Đá Chanh Tắc', price:5.50},
+      {code:'D5', name:'Thai Tea', vn:'Trà Thái', price:5.50},
+      {code:'D6', name:'Mango Smoothie', vn:'Sinh Tố Xoài', price:6.50},
+      {code:'D7', name:'Strawberry Smoothie', vn:'Sinh Tố Dâu', price:6.50},
+      {code:'D8', name:'Taro Smoothie', vn:'Sinh Tố Khoai Môn', price:6.50},
+      {code:'D9', name:'Avocado Smoothie', vn:'Sinh Tố Bơ', price:8.00},
+      {code:'D10', name:'Canned Soda', vn:'', price:2.00},
     ]},
 ];
 const SAUCES = ['House sauce','Peanut sauce','Soy sauce'];
@@ -179,7 +201,9 @@ MENU.forEach(cat => cat.items.forEach(it => { BY_CODE[it.code] = {it, cat}; }));
 let cart = load('hue_cart', []);          // [{key,code,name,vn,size,sauce,unit,qty}]
 let account = load('hue_acct', null);      // {first,last,email,phone,points}
 let tip = { pct:10, custom:null };         // selected tip
-let freePromo = null;                      // null | 'buy5' | 'points'  (one free Bánh Mì per order)
+let couponApplied = false;                 // WELCOME5: $5 off first online order of $50+
+const COUPON = { code:'WELCOME5', off:5, min:50 };
+let freePromo = null;                      // null | 'buy10' | 'points'  (one free Bánh Mì per order)
 let freeCode  = 'B1';                      // which Bánh Mì is free
 let pickupISO = null;                      // chosen pickup time (ISO)
 let contact   = { email:'', phone:'', pref:'both' }; // collected on every order
@@ -197,7 +221,7 @@ function unitPrice(it, sizeLabel){
 }
 function subtotal(){ return cart.reduce((s,l)=> s + l.unit*l.qty, 0); }
 function banhQty(){ return cart.reduce((s,l)=> s + (BY_CODE[l.code] && BY_CODE[l.code].cat.id==='banh' ? l.qty : 0), 0); }
-function buy5Available(){ return banhQty() >= CFG.BANH_FREE_QTY; }
+function buy10Available(){ return banhQty() >= CFG.BANH_FREE_QTY; }
 function pointsAvailable(){ return !!account && account.points >= CFG.REDEEM_POINTS; }
 function banhItems(){ const c = MENU.find(c=>c.id==='banh'); return c ? c.items : []; }
 function freeItemName(code){ const b = BY_CODE[code]; return b ? b.it.name : ''; }
@@ -248,13 +272,14 @@ function fmtSlot(d){
 function calcTotals(){
   const sub = subtotal();
   const hh  = happyHourDiscount();
-  const taxed = Math.max(0, sub - hh);
+  const coup = (couponApplied && sub >= COUPON.min) ? COUPON.off : 0;
+  const taxed = Math.max(0, sub - hh - coup);
   const tax = taxed * CFG.TAX_RATE;
   const fee = taxed * CFG.PROCESSING_FEE_RATE;
   const tipBase = sub;
   const tipAmt = tip.custom != null ? tip.custom : tipBase * (tip.pct/100);
   const total = taxed + tax + fee + tipAmt;
-  return { sub, hh, tax, fee, tipAmt, total, earned: Math.floor(sub) * CFG.POINTS_PER_DOLLAR };
+  return { sub, hh, coup, tax, fee, tipAmt, total, earned: Math.floor(sub) * CFG.POINTS_PER_DOLLAR };
 }
 
 /* ============================================================
@@ -269,6 +294,15 @@ function go(name){
   location.hash = name;
 }
 document.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => go(el.dataset.go)));
+// "Today's Table" photos deep-link to the exact item on the order menu
+document.querySelectorAll('[data-goitem]').forEach(el => el.addEventListener('click', () => {
+  const code = el.dataset.goitem;
+  go('order');
+  setTimeout(() => {
+    const row = document.querySelector(`.item[data-item="${code}"]`);
+    if (row){ row.scrollIntoView({behavior:'smooth', block:'center'}); row.classList.add('item--flash'); setTimeout(()=>row.classList.remove('item--flash'), 1600); }
+  }, 120);
+}));
 window.addEventListener('hashchange', () => { const h = location.hash.replace('#',''); if (views[h]) go(h); });
 
 /* ============================================================
@@ -324,6 +358,7 @@ function cateringSlots(){
 }
 function renderGallery(){
   const g = document.getElementById('gallery');
+  if (!g) return;
   let html = '';
   MENU.forEach(cat => cat.items.forEach(it => {
     html += `<button class="tile" data-tile="${it.code}" style="background:${THEMES[cat.theme]}" aria-label="${it.name}">
@@ -347,6 +382,37 @@ function scrollToItem(code){
 /* ============================================================
    RENDER · ORDER PAGE
    ============================================================ */
+const PHOTOS = {
+  N1:'images/bun-bo-hue.jpg',
+  S1:'images/tomahawk-meatball-pho.jpg',
+  S2:'images/oxtail-meatball-pho.jpg',
+  S3:'images/pho-oxtail-meatball.jpg',
+  S4:'images/seafood-pho.jpg',
+  S5:'images/combo-pho.jpg',
+  S6:'images/rare-steak-meatball-pho.jpg',
+  S7:'images/chicken-pho.jpg',
+  S8:'images/veg-tofu-pho.jpg',
+  A1:'images/egg-rolls-real.jpg',
+  A2:'images/veg-summer-rolls.jpg',
+  A3:'images/summer-rolls-real.jpg',
+  A6:'images/salt-pepper-tofu.jpg',
+  A7:'images/salt-pepper-calamari.jpg',
+  W1:'images/shrimp-fried-rice.jpg',
+  W2:'images/fried-rice-real.jpg',
+  M1:'images/mongolian-beef-real.jpg',
+  M2:'images/shaken-beef.jpg',
+  G1:'images/papaya-salad.jpg',
+  B5:'images/banh-mi-grilled-pork.jpg',
+  B6:'images/banh-mi-grilled-pork.jpg',
+  B7:'images/banh-mi-grilled-pork.jpg',
+  B9:'images/banh-mi-grilled-pork.jpg',
+  B8:'images/banh-mi-roasted-pork.jpg',
+  T1:'images/mango-sticky-rice.jpg',
+  D7:'images/strawberry-smoothie.jpg',
+  D9:'images/avocado-smoothie.jpg'
+};
+// REAL photos (no AI caption): N1, A1, A3, M1, W2. Everything else is AI-generated.
+const AI_PHOTO = new Set(['S1','S2','S3','S4','S5','S6','S7','S8','A2','A6','A7','W1','M2','G1','B5','B6','B7','B8','B9','T1','D7','D9']);
 function renderMenu(){
   // category chips
   document.getElementById('catRow').innerHTML =
@@ -357,25 +423,30 @@ function renderMenu(){
     html += `<div class="cat-head" id="cat-${cat.id}">
       <h3>${cat.name}</h3>${cat.vn?`<div class="vn">${cat.vn}</div>`:''}
       ${cat.note?`<div class="note">${cat.note}</div>`:''}</div>`;
+    if (cat.fold) html += `<details class="sides-fold"><summary>Add extra sides — tap to open ▾</summary>`;
     cat.items.forEach(it => {
+      const uniform = it.sizes && it.sizes.every(s=>s.p===it.sizes[0].p);
       const priceLabel = it.sizes
-        ? it.sizes.map(s=>`${s.l[0]} ${money(s.p)}`).join(' · ')
+        ? (uniform ? money(it.sizes[0].p) : it.sizes.map(s=>`${s.l} ${money(s.p)}`).join(' · '))
         : money(it.price);
       let ctrl = '';
-      if (it.sizes) ctrl += `<select class="sel" data-size="${it.code}">${it.sizes.map(s=>`<option value="${s.l}">${s.l} — ${money(s.p)}</option>`).join('')}</select>`;
+      if (it.sizes) ctrl += `<select class="sel" data-size="${it.code}" aria-label="Choice">${it.sizes.map(s=>`<option value="${s.l}">${uniform ? s.l : s.l+' — '+money(s.p)}</option>`).join('')}</select>`;
+      if (it.opts) ctrl += `<fieldset class="opts" data-optgrp="${it.code}"><legend>${it.opts.label}</legend>${it.opts.choices.map(c=>`<label class="optchip"><input type="checkbox" value="${c}" data-opt="${it.code}"><span>${c}</span></label>`).join('')}</fieldset>`;
       if (cat.sauce) ctrl += `<select class="sel" data-sauce="${it.code}">${SAUCES.map(s=>`<option>${s}</option>`).join('')}</select>`;
       ctrl += `<input class="qtynum" type="number" inputmode="numeric" min="1" max="99" value="1" data-qty="${it.code}" aria-label="Quantity">`;
       ctrl += `<button class="add" data-add="${it.code}">Add</button>`;
       html += `<div class="item" data-item="${it.code}">
-        <div class="item__thumb" style="background:${THEMES[cat.theme]}"><span class="px">${it.code}</span>${itemGlyph(it,cat)}</div>
+        <div class="item__thumb${PHOTOS[it.code]?' item__thumb--photo':''}"${PHOTOS[it.code]?'':` style="background:${THEMES[cat.theme]}"`}>${PHOTOS[it.code]?`<img class="item__img" src="${PHOTOS[it.code]}" alt="${it.name}" loading="lazy">`:`${itemGlyph(it,cat)}`}</div>
         <div class="item__body">
-          <div class="item__name">${it.name}</div>
+          <div class="item__name">${it.name}${it.spicy?" 🌶":""}${it.veg?" 🌱":""}${it.star?" ⭐":""}</div>
+          ${PHOTOS[it.code]&&AI_PHOTO.has(it.code)?`<small class="ai-cap ai-cap--row">AI-assisted illustration; actual food may vary.</small>`:''}
           ${it.vn?`<div class="item__vn">${it.vn}</div>`:''}
           ${it.desc?`<div class="item__desc">${it.desc}</div>`:''}
           <div class="item__price">${priceLabel}</div>
           <div class="item__ctrl">${ctrl}</div>
         </div></div>`;
     });
+    if (cat.fold) html += `</details>`;
   });
   document.getElementById('menuList').innerHTML = html;
 
@@ -385,6 +456,22 @@ function renderMenu(){
   }));
   // add buttons (event delegation could be used; explicit binding kept simple here)
   document.querySelectorAll('[data-add]').forEach(btn => btn.addEventListener('click', () => onAdd(btn)));
+  // opts groups: cap selections at their max
+  document.querySelectorAll('.opts').forEach(grp => grp.addEventListener('change', () => {
+    const code = grp.dataset.optgrp; const { it } = BY_CODE[code];
+    const boxes = grp.querySelectorAll('[data-opt]');
+    const checked = grp.querySelectorAll('[data-opt]:checked').length;
+    boxes.forEach(b => { if(!b.checked) b.disabled = checked >= it.opts.max; });
+  }));
+  // Today's Features: show name + price under every photo
+  document.querySelectorAll('.pcard[data-goitem]').forEach(card => {
+    const e = BY_CODE[card.dataset.goitem]; if (!e) return;
+    const it = e.it;
+    const uni = it.sizes && it.sizes.every(s=>s.p===it.sizes[0].p);
+    const pr = it.sizes ? (uni ? money(it.sizes[0].p) : it.sizes.map(s=>`${s.l} ${money(s.p)}`).join(' · ')) : money(it.price);
+    const cap = card.querySelector('.pcard__cap');
+    if (cap && !cap.querySelector('.pcard__price')) cap.insertAdjacentHTML('beforeend', `<span class="pcard__price">${pr}</span>`);
+  });
   // scroll-spy for chips
   initScrollSpy();
 }
@@ -395,7 +482,16 @@ function onAdd(btn){
   const sauceEl = document.querySelector(`[data-sauce="${code}"]`);
   const qtyEl = document.querySelector(`[data-qty="${code}"]`);
   const size = sizeEl ? sizeEl.value : null;
-  const sauce = sauceEl ? sauceEl.value : null;
+  let sauce = sauceEl ? sauceEl.value : null;
+  if (it.opts){
+    const picked = Array.from(document.querySelectorAll(`[data-opt="${code}"]:checked`)).map(b=>b.value);
+    const grp = document.querySelector(`[data-optgrp="${code}"]`);
+    if (picked.length < 1 || picked.length > it.opts.max){
+      if (grp){ grp.classList.add('opts--err'); setTimeout(()=>grp.classList.remove('opts--err'), 1600); }
+      return; // must pick 1 to max
+    }
+    sauce = picked.join(', ');
+  }
   let qty = qtyEl ? parseInt(qtyEl.value,10) : 1;
   if (!Number.isFinite(qty) || qty<1) qty=1; if (qty>99) qty=99;
   const unit = unitPrice(it, size);
@@ -473,7 +569,7 @@ function changeQty(key, d){
   const l = cart.find(x=>x.key===key); if (!l) return;
   l.qty += d;
   if (l.qty<=0) cart = cart.filter(x=>x.key!==key);
-  if (freePromo==='buy5' && !buy5Available()) freePromo = null;
+  if (freePromo==='buy10' && !buy10Available()) freePromo = null;
   save(); syncCart(); renderCart();
 }
 
@@ -493,7 +589,7 @@ document.getElementById('cartBarGo').addEventListener('click', ()=>{ renderCart(
    ============================================================ */
 function openCheckout(){
   if (!cart.length){ toast('Your cart is empty'); return; }
-  if (freePromo==='buy5' && !buy5Available()) freePromo = null;
+  if (freePromo==='buy10' && !buy10Available()) freePromo = null;
   if (freePromo==='points' && !pointsAvailable()) freePromo = null;
   if (!banhItems().some(b=>b.code===freeCode)) freeCode = (banhItems()[0]||{}).code || 'B1';
   if (account){ if(!contact.email) contact.email=account.email; if(!contact.phone) contact.phone=account.phone; }
@@ -517,20 +613,20 @@ function renderCheckout(){
       <button class="btn-ghost" id="coLogin">Log in</button>
     </div>`;
 
-  const b5 = buy5Available(), pa = pointsAvailable();
+  const b5 = buy10Available(), pa = pointsAvailable();
   let freeBlock = '';
   if (b5 || pa){
     const opts = banhItems().map(b=>`<option value="${b.code}" ${b.code===freeCode?'selected':''}>${esc(b.name)} (${money(b.price)})</option>`).join('');
     freeBlock = `<div class="co-block">
       <h4>🥖 Free Bánh Mì</h4>
-      <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">One promotion per order. A free Bánh Mì replaces the Happy Hour discount, and Buy 5 / 100 points lock each other.</p>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">One promotion per order. A free Bánh Mì replaces the Happy Hour discount, and Buy 10 / 100 points lock each other.</p>
       <label class="freeopt ${!freePromo?'on':''}"><input type="radio" name="freePromo" value="" ${!freePromo?'checked':''}><span>No free sandwich</span></label>
-      <label class="freeopt ${freePromo==='buy5'?'on':''} ${b5?'':'lock'}"><input type="radio" name="freePromo" value="buy5" ${freePromo==='buy5'?'checked':''} ${b5?'':'disabled'}><span>Buy 5 Get 1 Free${b5?'':' · add '+(CFG.BANH_FREE_QTY-banhQty())+' more Bánh Mì'}</span></label>
+      <label class="freeopt ${freePromo==='buy10'?'on':''} ${b5?'':'lock'}"><input type="radio" name="freePromo" value="buy10" ${freePromo==='buy10'?'checked':''} ${b5?'':'disabled'}><span>Buy 10 Get 1 Free${b5?'':' · add '+(CFG.BANH_FREE_QTY-banhQty())+' more Bánh Mì'}</span></label>
       <label class="freeopt ${freePromo==='points'?'on':''} ${pa?'':'lock'}"><input type="radio" name="freePromo" value="points" ${freePromo==='points'?'checked':''} ${pa?'':'disabled'}><span>Redeem 100 points${pa?'':(account?' · '+(CFG.REDEEM_POINTS-account.points)+' more points':' · sign in')}</span></label>
       <div class="freepick" style="${freePromo?'':'display:none'}">
         <label for="freeItem" style="font-size:12px;color:var(--ink-soft);display:block;margin:10px 0 5px">Choose your free Bánh Mì</label>
         <select class="sel" id="freeItem">${opts}</select>
-        <p class="freeprompt" style="${freePromo==='buy5'?'':'display:none'}">You have ordered more than five sandwiches, please select one free sandwich. Any choice is allowed.</p>
+        <p class="freeprompt" style="${freePromo==='buy10'?'':'display:none'}">You have ordered ten or more sandwiches, please select one free sandwich. Any choice is allowed.</p>
       </div>
     </div>`;
   }
@@ -582,6 +678,11 @@ function renderCheckout(){
 
     <div class="co-block">
       <h4>🧾 Order summary</h4>
+      <div class="couponrow">
+        <input type="text" id="couponInput" class="qtynum" style="width:auto;flex:1;text-transform:uppercase" placeholder="Coupon code" value="${couponApplied?COUPON.code:''}" aria-label="Coupon code">
+        <button class="add" id="couponBtn" type="button">${couponApplied?'Remove':'Apply'}</button>
+      </div>
+      <p id="couponMsg" style="font-size:11.5px;color:var(--ink-soft);margin:-4px 0 8px"></p>
       <div class="totals" id="coTotals"></div>
     </div>
 
@@ -597,18 +698,43 @@ function renderCheckout(){
       Secure HTTPS checkout · one promotion per order.</p>
   `;
   bindCheckout();
+  const cb = document.getElementById('couponBtn');
+  if (cb) cb.addEventListener('click', () => {
+    const inp = document.getElementById('couponInput');
+    const msg = document.getElementById('couponMsg');
+    if (couponApplied){ couponApplied=false; if(inp) inp.value=''; if(msg) msg.textContent=''; cb.textContent='Apply'; renderCoTotals(); return; }
+    const v = (inp && inp.value || '').trim().toUpperCase();
+    if (v !== COUPON.code){ if(msg){ msg.style.color='#B23B3B'; msg.textContent='That code is not valid.'; } return; }
+    if (subtotal() < COUPON.min){ if(msg){ msg.style.color='#B23B3B'; msg.textContent='WELCOME5 needs an order of $'+COUPON.min+' or more.'; } return; }
+    const email = (contact.email||'').trim();
+    if (!emailOk(email)){ if(msg){ msg.style.color='#B23B3B'; msg.textContent='Enter your email above first — WELCOME5 is for your first order.'; } return; }
+    const grant = () => { couponApplied = true; cb.textContent='Remove';
+      if(msg){ msg.style.color='#1f7a4d'; msg.textContent='$5 off applied. Welcome!'; } renderCoTotals(); };
+    if (CFG.FORMS_BACKEND){
+      cb.disabled = true; if(msg){ msg.style.color='var(--ink-soft)'; msg.textContent='Checking your coupon…'; }
+      fetch((CFG.API_BASE||'')+'/api/coupon',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({code:v, email:email, subtotal:subtotal()})})
+        .then(r=>r.json()).then(d=>{
+          cb.disabled=false;
+          if (d && d.ok){ grant(); }
+          else if(msg){ msg.style.color='#B23B3B'; msg.textContent=(d && d.reason)||'This coupon cannot be used on this order.'; }
+        })
+        .catch(()=>{ cb.disabled=false; grant(); }); // network hiccup: allow client-side; server re-checks at order time
+    } else { grant(); }
+  });
   renderCoTotals();
 }
 function renderCoTotals(){
   const t = calcTotals();
   let rows = `<div class="row"><span>Subtotal</span><b>${money(t.sub)}</b></div>`;
   if (t.hh>0) rows += `<div class="row disc"><span>Happy Hour · wings</span><b style="color:var(--ok)">−${money(t.hh)}</b></div>`;
+  if (t.coup>0) rows += `<div class="row disc"><span>Coupon · WELCOME5</span><b style="color:var(--ok)">−${money(t.coup)}</b></div>`;
   if (freePromo){ const nm=freeItemName(freeCode);
     rows += `<div class="row"><span>Free Bánh Mì · ${esc(nm)}</span><b style="color:var(--ok)">$0.00</b></div>`;
     if (freePromo==='points') rows += `<div class="row"><span>Points used</span><b>−${CFG.REDEEM_POINTS} ⭐</b></div>`;
   }
   rows += `<div class="row"><span>Pickup</span><b>Free</b></div>`;
-  if (CFG.PROCESSING_FEE_RATE>0) rows += `<div class="row"><span>Processing fee (${(CFG.PROCESSING_FEE_RATE*100).toFixed(0)}%)</span><b>${money(t.fee)}</b></div>`;
+  if (CFG.PROCESSING_FEE_RATE>0) rows += `<div class="row"><span>Processing fee (${parseFloat((CFG.PROCESSING_FEE_RATE*100).toFixed(1))}%)</span><b>${money(t.fee)}</b></div>`;
   rows += `<div class="row"><span>Sales tax (${(CFG.TAX_RATE*100).toFixed(2)}%)</span><b>${money(t.tax)}</b></div>`;
   rows += `<div class="row"><span>Tip</span><b>${money(t.tipAmt)}</b></div>`;
   rows += `<div class="row grand"><span>Total</span><span>${money(t.total)}</span></div>`;
@@ -667,12 +793,18 @@ function placeOrder(method, ordOverride){
 
   let totalsR = '';
   if (t.hh>0) totalsR += `<div class="rcp-line"><span>Happy Hour</span><b>−${money(t.hh)}</b></div>`;
+  if (t.coup>0) totalsR += `<div class="rcp-line"><span>Coupon · WELCOME5</span><b>−${money(t.coup)}</b></div>`;
   if (CFG.PROCESSING_FEE_RATE>0) totalsR += `<div class="rcp-line"><span>Processing fee</span><b>${money(t.fee)}</b></div>`;
   totalsR += `<div class="rcp-line"><span>Sales tax</span><b>${money(t.tax)}</b></div>`;
   totalsR += `<div class="rcp-line"><span>Tip</span><b>${money(t.tipAmt)}</b></div>`;
   totalsR += `<div class="rcp-line rcp-total"><span>Total paid</span><b>${money(t.total)}</b></div>`;
 
 
+  if (couponApplied && t.coup>0 && CFG.FORMS_BACKEND){
+    fetch((CFG.API_BASE||'')+'/api/coupon',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({code:COUPON.code, email:(contact.email||'').trim(), subtotal:t.sub, redeem:true, order:ord})}).catch(()=>{});
+  }
+  couponApplied = false;
   cart = []; freePromo=null; pickupISO=null; save(); syncCart();
   closeSheets();
 
@@ -1061,6 +1193,7 @@ function updateOpenStatus(){
   const now = new Date(); const day = now.getDay(); const h = now.getHours();
   const open = day>=1 && day<=6 && h>=10 && h<20; // Mon–Sat 10–8
   const el = document.getElementById('openStatus');
+  if (!el) return;
   el.querySelector('.dot').style.background = open ? 'var(--ok)' : '#B23B3B';
   el.style.background = open ? 'rgba(46,125,82,.1)' : 'rgba(178,59,59,.1)';
   el.style.color = open ? 'var(--ok)' : '#B23B3B';
@@ -1076,7 +1209,8 @@ syncCart();
 renderLoyalty();
 renderCatering();
 updateOpenStatus();
-const startHash = location.hash.replace('#','');
+let startHash = location.hash.replace('#','');
+if(!startHash){ const seg=(location.pathname.split('/').filter(Boolean).pop()||'').toLowerCase(); if(views[seg]) startHash=seg; }
 if (views[startHash]) go(startHash);
 
 /* ---- foundation: footer year, sheet links, cookie consent, analytics, forms ---- */
