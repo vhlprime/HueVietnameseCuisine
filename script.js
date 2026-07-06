@@ -19,7 +19,7 @@ const CFG = {
   ADDRESS: '6538 4th Ave S, Suite 1, Seattle, WA 98108',
   PAY: { apple: 'minhh2004@icloud.com', paypal: 'huevietnamesecuisine@gmail.com' },
   PAYPAL_LINK: 'https://www.paypal.com/ncp/payment/JM9PCZ6QGEYBY',
-  PAYPAL_HOSTED_ID: 'JM9PCZ6QGEYBY',
+  PAYPAL_HOSTED_ID: '',
   PAYPAL_FORCE_FALLBACK: true, // TEMP: PayPal's own Hosted Button is erroring ("Contact the merchant
   // for help") — almost always a client-id / hosted-button-id account mismatch (see DEPLOY.md).
   // While true, customers see the plain, always-working PayPal.me link instead of the broken button.
