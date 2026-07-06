@@ -22,7 +22,9 @@ const CFG = {
   API_BASE: '', // backend base URL; leave '' if the site and API share the same domain
   PAYMENTS_BACKEND: true, // live: /api/orders, /api/orders/:id/capture, /api/stripe/* are deployed
   TURNSTILE_SITEKEY: '0x4AAAAAADwYT4YkdY35T7_S', // Cloudflare Turnstile TEST key — replace with your real site key
-  NOTIFY_EMAIL: 'huevietnamesecuisine@gmail.com',
+  PAYPAL_HOSTED_ID: 'JM9PCZ6QGEYBY',
+   PAYPAL_FORCE_FALLBACK: false.
+   NOTIFY_EMAIL: 'huevietnamesecuisine@gmail.com',
   NOTIFY_SMS: '(206) 554-9522',
   SOCIAL: {                    // paste your real links here
     facebook:'#', instagram:'https://www.instagram.com/huevietnamesecuisine?utm_source=qr', google:'https://share.google/7k33YKncJSt5fTXe6', yelp:'#',
