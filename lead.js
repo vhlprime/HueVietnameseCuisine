@@ -28,7 +28,7 @@ export async function onRequestPost({ request, env }) {
             <p>Enter the code in the coupon box at checkout on
                <a href="https://huevietnamesecuisine.com" style="color:#7A1420">huevietnamesecuisine.com</a>.</p>
             <p style="font-size:12px;color:#8a7a76">One coupon per customer, first online order only, minimum $50 subtotal before tax &amp; fees. Cannot be combined with another promotion.</p>
-            <p>6538 4th Ave S, Suite 1 · Seattle, WA 98108 · (206) 693-3311<br>Mon–Sat 10 AM – 8 PM · Pickup · Takeout · Catering</p>
+            <p>6538 4th Ave S, Suite 1 · Seattle, WA 98108 · (206) 693-3311<br>Mon–Sun 10 AM – 8 PM · DineIn · Takeout · Catering</p>
           </div>`
       })
     });
