@@ -20,9 +20,13 @@ const CFG = {
   PAY: { apple: 'minhh2004@icloud.com', paypal: 'huevietnamesecuisine@gmail.com' },
   PAYPAL_LINK: 'https://www.paypal.com/ncp/payment/JM9PCZ6QGEYBY',
   PAYPAL_HOSTED_ID: 'JM9PCZ6QGEYBY',
+  PAYPAL_FORCE_FALLBACK: true, // TEMP: PayPal's own Hosted Button is erroring ("Contact the merchant
+  // for help") — almost always a client-id / hosted-button-id account mismatch (see DEPLOY.md).
+  // While true, customers see the plain, always-working PayPal.me link instead of the broken button.
+  // Set back to false once you've confirmed the correct Live client-id in index.html's PayPal <script> tag.
   STRIPE_PK: 'pk_test_51Tjmcw2M78EoYLEyghbHCJKOc939oU83Q3KKOXferWpnl5chPpOxr8PVvVqW6znX5yE8skZmOpsib5GVWybj9PWT00hkAwBHeJ', // publishable key — safe in front-end
   API_BASE: '', // backend base URL; leave '' if the site and API share the same domain
-  PAYMENTS_BACKEND: false, // set true once your live PayPal backend (/api/orders) is deployed
+  PAYMENTS_BACKEND: true, // live: /api/orders, /api/orders/:id/capture, /api/stripe/* are deployed
   TURNSTILE_SITEKEY: '1x00000000000000000000AA', // Cloudflare Turnstile TEST key — replace with your real site key
   NOTIFY_EMAIL: 'huevietnamesecuisine@gmail.com',
   NOTIFY_SMS: '(206) 554-9522',
@@ -808,6 +812,19 @@ function placeOrder(method, ordOverride){
   cart = []; freePromo=null; pickupISO=null; save(); syncCart();
   closeSheets();
 
+  if (CFG.FORMS_BACKEND){
+    fetch((CFG.API_BASE||'')+'/api/orders/notify',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        code: ord, method, total: t.total,
+        items: lines.map(l=>({ qty:l.qty, name:l.name, opt:[l.size,l.sauce].filter(Boolean).join(' · '), lineTotal:l.unit*l.qty })),
+        free: freeName || '',
+        totals: { sub:t.sub, hh:t.hh, coup:t.coup, fee:t.fee, tax:t.tax, tip:t.tipAmt, total:t.total },
+        pickup: pickupTxt,
+        contact: { name: account?account.first:'', email: contact.email, phone: contact.phone, pref: contact.pref },
+      })
+    }).catch(()=>{}); // best-effort — payment already succeeded either way
+  }
+
   document.getElementById('confirmBody').innerHTML = `
     <div class="sheet__head"><h3>Order confirmed</h3><button class="sheet__close" data-close>×</button></div>
     <div class="sheet__pad">
@@ -988,6 +1005,7 @@ function payPalOrderSnapshot(code){
 }
 function mountPayPal(){
   try{
+    if(CFG.PAYPAL_FORCE_FALLBACK) throw new Error('fallback_forced');
     if(window.paypal && CFG.PAYMENTS_BACKEND && window.paypal.Buttons){
       const base = CFG.API_BASE || '';
       // Real, success-gated checkout: order created + captured server-side (live PayPal); receipt only on COMPLETED.
@@ -1277,8 +1295,13 @@ if (views[startHash]) go(startHash);
     if(CFG.FORMS_BACKEND){
       leadBtn.disabled=true; if(m){m.style.color="#6b5a58"; m.textContent="Sending your coupon...";}
       fetch((CFG.API_BASE||"")+"/api/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})
-        .then(function(r){ if(!r.ok) throw 0; if(m){m.style.color="#1f7a4d"; m.textContent="Check your inbox. Your coupon is on the way!";} var n=document.getElementById("leadEmail"); if(n)n.value=""; })
-        .catch(function(){ if(m){m.style.color="#b3261e"; m.textContent="Could not sign you up right now. Please try again later.";} })
+        .then(function(r){ return r.json().catch(function(){return {};}).then(function(d){ return {ok:r.ok, d:d}; }); })
+        .then(function(res){
+          if(!res.ok){ throw new Error((res.d && res.d.error) || "Could not sign you up right now. Please try again later."); }
+          if(m){m.style.color="#1f7a4d"; m.textContent="Check your inbox. Your coupon is on the way!";}
+          var n=document.getElementById("leadEmail"); if(n)n.value="";
+        })
+        .catch(function(err){ if(m){m.style.color="#b3261e"; m.textContent=(err&&err.message)||"Could not sign you up right now. Please try again later.";} })
         .then(function(){ leadBtn.disabled=false; });
     } else {
       if(m){m.style.color="#1f7a4d"; m.textContent="Thanks! We will email your coupon once we go live.";}
