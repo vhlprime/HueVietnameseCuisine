@@ -31,7 +31,7 @@ const CFG = {
   NOTIFY_EMAIL: 'huevietnamesecuisine@gmail.com',
   NOTIFY_SMS: '(206) 554-9522',
   SOCIAL: {                    // paste your real links here
-    facebook:'#', instagram:'#', google:'#', yelp:'#',
+    facebook:'#', instagram:'https://www.instagram.com/huevietnamesecuisine?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr', google:'#', yelp:'#',
     website:'https://huevietnamesecuisine.com'
   }
 };
