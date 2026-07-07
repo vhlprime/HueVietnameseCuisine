@@ -1,10 +1,10 @@
 /* ============================================================
-   DESIGN TOKENS  Hue Vietnamese Cuisine
+   DESIGN TOKENS  ·  Imperial Huế palette
    ============================================================ */
 :root{
-  --crimson:#A85A6B;        /* soft dusty-rose blush â€” calm primary accent */
+  --crimson:#A85A6B;        /* soft dusty-rose blush — calm primary accent */
   --crimson-deep:#8E4A5B;   /* deeper blush */
-  --burgundy:#F4B9C8;       /* soft petal pink â€” cart / add / checkout backgrounds */
+  --burgundy:#F4B9C8;       /* soft petal pink — cart / add / checkout backgrounds */
   --burgundy-deep:#EBA6B8;  /* deeper petal pink */
   --gold:#C9A24B;           /* royal gold accent */
   --gold-light:#E3C572;     /* gold highlight */
@@ -74,7 +74,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.05;letter-spac
 .gold-rule{height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:10px 0 22px}
 
 /* ============================================================
-   HOME Â· HERO
+   HOME · HERO
    ============================================================ */
 .hero{background:radial-gradient(120% 90% at 50% -10%,#fff 0%,var(--ivory) 60%);
   text-align:center;padding:24px 18px 8px}
@@ -463,7 +463,7 @@ img{max-width:100%;height:auto}
     padding-bottom:8px;scrollbar-width:none}
   .photos::-webkit-scrollbar{display:none}
   .pcard{scroll-snap-align:center}
-  /* iOS Safari auto-zooms any focused text input under 16px â€” keep these at 16px to stop the jump */
+  /* iOS Safari auto-zooms any focused text input under 16px — keep these at 16px to stop the jump */
   input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:16px}
   /* Apple/Google recommend ~44px minimum touch targets */
   .add{min-height:44px;padding:10px 18px}
@@ -486,11 +486,11 @@ img{max-width:100%;height:auto}
 @media(max-width:639px){.photos .pcard--hero{grid-auto-columns:auto;width:88%}}
 .item--flash{outline:2px solid var(--gold);outline-offset:2px;transition:outline-color 1.2s ease}
 
-/* signature 1: subtle prismatic-blue sheen on the primary Order button (static gradient â€” zero runtime cost) */
+/* signature 1: subtle prismatic-blue sheen on the primary Order button (static gradient — zero runtime cost) */
 .quick__btn.primary{background:linear-gradient(120deg,var(--burgundy) 0%,var(--burgundy) 55%,#3f5e8c 85%,#6aa5c9 100%);background-size:140% 140%}
 .quick__btn.primary .arrow{color:#dcecf7}
 
-/* signature 2: gentle 3D tilt on Today's Table cards â€” desktop pointers only, respects reduced motion */
+/* signature 2: gentle 3D tilt on Today's Table cards — desktop pointers only, respects reduced motion */
 @media (hover:hover) and (prefers-reduced-motion:no-preference){
   .pcard{transition:transform .18s ease, box-shadow .18s ease}
   .pcard:hover{transform:perspective(700px) rotateX(1.6deg) rotateY(-1.6deg) translateY(-3px);box-shadow:0 14px 28px rgba(122,20,32,.14)}
@@ -500,7 +500,7 @@ img{max-width:100%;height:auto}
 .couponrow{display:flex;gap:8px;margin-bottom:10px}
 .couponrow .add{margin-left:0}
 
-/* choice checkboxes (Beef Phá»Ÿ meats), compact extra sides */
+/* choice checkboxes (Beef Phở meats), compact extra sides */
 .opts{border:1px solid var(--line,#e5d9cf);border-radius:10px;padding:6px 8px;margin:2px 0;display:flex;flex-wrap:wrap;gap:6px;width:100%}
 .opts legend{font-size:11px;color:var(--ink-soft);padding:0 4px}
 .optchip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;background:#faf5ee;border:1px solid #e5d9cf;border-radius:999px;padding:6px 10px;cursor:pointer}

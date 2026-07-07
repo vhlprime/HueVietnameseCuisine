@@ -133,35 +133,3 @@ I've started this (it's the piece I was mid-build on):
 Visit `https://huevietnamesecuisine.com/images/bun-bo-hue.jpg` and tell me what you
 see (image, 404, or error). That single result tells me whether the fix is "redeploy
 as Pages" (most likely) or something deeper — and then we knock these out in order.
-
-"></script>
-
-<!-- 3. The script block initializing and rendering the payment logic -->
-<script>
-  paypal.Buttons({
-    // Sets up the transaction details when the buyer clicks the button
-    createOrder: function(data, actions) {
-      return actions.order.create({
-        purchase_units: [{
-          amount: {
-            value: '10.00' // Specify your payment amount here
-          }
-        }]
-      });
-    },
-    
-    // Finalizes and captures the transaction after the buyer approves it
-    onApprove: function(data, actions) {
-      return actions.order.capture().then(function(details) {
-        // Displays a success message or redirects the user
-        alert('Transaction completed by ' + details.payer.name.given_name + '!');
-      });
-    },
-
-    // Optional: Handles errors during execution
-    onError: function(err) {
-      console.error('An error occurred during the transaction:', err);
-    }
-  }).render('#paypal-button-container'); // Appends buttons to the container div
-</script>
-

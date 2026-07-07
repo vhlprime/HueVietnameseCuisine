@@ -1,16 +1,16 @@
-
 // functions/api/stripe/payment-intent.js — POST /api/stripe/payment-intent
-// Creates a Stripe PaymentIntent for Apple Pay / the browser Payment Request sheet.
-// Stripe API docs: https://stripe.com/docs/api/payment_intents/create
+// Apple Pay / Payment Request sheet. Amount is computed server-side from the cart payload.
+import { computeTotals } from '../_totals.js';
+
 export async function onRequestPost({ request, env }) {
   try {
-    const { amount } = await request.json();
-    const cents = Math.round(Number(amount) * 100);
-    if (!cents || cents <= 0 || cents > 200000) {
-      return new Response(JSON.stringify({ error: 'Invalid amount' }), { status: 400 });
-    }
+    const payload = await request.json();
+    let totals;
+    try { totals = computeTotals(payload); }
+    catch (e) { return new Response(JSON.stringify({ error: e.message }), { status: 400 }); }
+
     const body = new URLSearchParams({
-      amount: String(cents),
+      amount: String(Math.round(totals.total * 100)),
       currency: 'usd',
       'automatic_payment_methods[enabled]': 'true',
       description: 'Huế Vietnamese Cuisine order',
@@ -22,7 +22,7 @@ export async function onRequestPost({ request, env }) {
     });
     const d = await r.json();
     if (!r.ok) return new Response(JSON.stringify({ error: d?.error?.message || 'stripe_failed' }), { status: 502 });
-    return new Response(JSON.stringify({ clientSecret: d.client_secret }), { headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ clientSecret: d.client_secret, total: totals.total }), { headers: { 'Content-Type': 'application/json' } });
   } catch (e) {
     return new Response(JSON.stringify({ error: 'Bad request' }), { status: 400 });
   }
