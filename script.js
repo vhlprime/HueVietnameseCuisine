@@ -399,18 +399,21 @@ const PHOTOS = {
   W2:'images/fried-rice-real.jpg',
   M1:'images/mongolian-beef-real.jpg',
   M2:'images/shaken-beef.jpg',
-  G1:'images/papaya-salad.jpg',
+  G1:'images/papaya-salad-real.jpg',
+  B2:'images/banh-mi-grilled-pork.jpg',
+  B3:'images/banh-mi-grilled-pork.jpg',
+  B4:'images/banh-mi-grilled-pork.jpg',
   B5:'images/banh-mi-grilled-pork.jpg',
   B6:'images/banh-mi-grilled-pork.jpg',
   B7:'images/banh-mi-grilled-pork.jpg',
+  B8:'images/banh-mi-grilled-pork.jpg',
   B9:'images/banh-mi-grilled-pork.jpg',
-  B8:'images/banh-mi-roasted-pork.jpg',
   T1:'images/mango-sticky-rice.jpg',
   D7:'images/strawberry-smoothie.jpg',
   D9:'images/avocado-smoothie.jpg'
 };
-// REAL photos (no AI caption): N1, A1, A3, M1, W2. Everything else is AI-generated.
-const AI_PHOTO = new Set(['S1','S2','S3','S4','S5','S6','S7','S8','A2','A6','A7','W1','M2','G1','B5','B6','B7','B8','B9','T1','D7','D9']);
+// REAL photos (no AI caption): N1, A1, A3, M1, W2, G1. Everything else is AI-generated.
+const AI_PHOTO = new Set(['S1','S2','S3','S4','S5','S6','S7','S8','A2','A6','A7','W1','M2','B2','B3','B4','B5','B6','B7','B8','B9','T1','D7','D9']);
 function renderMenu(){
   // category chips
   document.getElementById('catRow').innerHTML =
